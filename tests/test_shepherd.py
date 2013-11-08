@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from tests import TestCase
+import os
+import time
+import signal
+
 from preggy import expect
 
 from sheep import Shepherd, __version__
+from tests import TestCase
 
 
 class TestShepherd(TestCase):
@@ -34,3 +38,55 @@ class TestShepherd(TestCase):
 
     #def test_parse_arguments_can_get_help_text(self):
         #shepherd = Shepherd(['--help'])
+
+    def test_do_work_does_nothing_by_default(self):
+        shepherd = Shepherd([])
+        expect(shepherd.do_work()).to_be_null()
+
+    def test_load_config_returns_if_no_config(self):
+        shepherd = Shepherd([])
+        shepherd.load_config()
+
+        expect(shepherd.config).to_be_null()
+
+    def test_load_config_loads_configuration_file(self):
+        shepherd = Shepherd(["-c", "./tests/cons.conf"])
+        shepherd.load_config()
+
+        expect(shepherd.config.KEY).to_equal("doing something...")
+
+    def test_should_continue_working(self):
+        shepherd = Shepherd([])
+
+        expect(shepherd.should_continue_working()).to_be_true()
+
+    def test_configure_log(self):
+        shepherd = Shepherd(['-vvv'])
+        shepherd.configure_log()
+        # unfortunately this test can't assert anything because nose
+        # basicConfig for logging runs before sheep's
+
+    def test_handle_child_process(self):
+        class Shep(Shepherd):
+            def __init__(self, *args, **kw):
+                super(Shep, self).__init__(*args, **kw)
+                self.has_run = False
+
+            def do_work(self):
+                os.kill(os.getppid(), signal.SIGINFO)
+
+        shepherd = Shep(['-vvv'])
+
+        pid = os.fork()
+
+        if pid:
+            def handle_signal(signum, value):
+                expect(signum).to_equal(29)
+                os.kill(pid, signal.SIGTERM)
+                os.waitpid(pid, 0)
+
+            signal.signal(signal.SIGINFO, handle_signal)
+
+            time.sleep(1)
+        else:
+            shepherd.handle_child_process("worker")

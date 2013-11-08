@@ -12,4 +12,4 @@ setup:
 	@pip install -U -e .\[tests\]
 
 run:
-	@python tests/cons.py -vvv -w 4
+	@python tests/cons.py -vvv -w 4 -c ./tests/cons.conf

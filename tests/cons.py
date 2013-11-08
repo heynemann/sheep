@@ -6,7 +6,8 @@ from sheep.shepherd import Shepherd
 
 
 class Cons(Shepherd):
-    pass
+    def do_work(self):
+        print self.config.KEY
 
 if __name__ == "__main__":
     Cons.run()
