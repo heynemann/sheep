@@ -100,7 +100,7 @@ class Shepherd(object):
         name = self.get_description()
 
         def handle_sigterm(signal, frame):
-            logging.info('[%s - %s] Killing fork with signal %s...' % (name, worker_name, signal))
+            logging.info('[%s - %s] Terminating sheep with signal %s...' % (name, worker_name, signal))
             os._exit(0)
 
         signal.signal(signal.SIGTERM, handle_sigterm)
@@ -119,12 +119,12 @@ class Shepherd(object):
     def start(self):
         name = self.get_description()
 
-        logging.info("[%s - %s] Forking %d workers..." % (name, self.parent_name, self.options.workers))
+        logging.info("[%s - %s] Gathering %d sheep..." % (name, self.parent_name, self.options.workers))
 
         self.children = []
 
         for i in range(self.options.workers):
-            worker_name = "%s%sworker %d%s" % (
+            worker_name = "%s%ssheep #%d%s" % (
                 Fore.GREEN,
                 Style.BRIGHT,
                 i,
@@ -141,28 +141,46 @@ class Shepherd(object):
 
     @property
     def parent_name(self):
-        return "%s%sParent%s" % (
+        return "%s%sShepherd%s" % (
             Fore.YELLOW,
             Style.BRIGHT,
             Style.RESET_ALL
         )
 
+    def handle_signal(self, signal, frame):
+        name = self.get_description()
+
+        logging.info('[%s - %s] Sheperd going away after signal interrupt (Shepherd PID: %d, Signal: %d)...' % (
+            name, self.parent_name, os.getpid(), signal
+        ))
+
+        self.kill_children()
+        sys.exit(0)
+
     def wait_for_children(self):
         name = self.get_description()
+
+        signal.signal(signal.SIGTERM, self.handle_signal)
+        signal.signal(signal.SIGINT, self.handle_signal)
 
         try:
             while True:
                 time.sleep(self.options.sleep)
         except KeyboardInterrupt:
-            logging.info('[%s - %s] Closing after user interrupt (Parent PID: %d)...' % (name, self.parent_name, os.getpid()))
+            logging.info('[%s - %s] Sheperd going away after user interrupt (Shepherd PID: %d)...' % (
+                name, self.parent_name, os.getpid()
+            ))
 
-            for worker_index, pid in self.children:
-                logging.info("[%s - %s] Killing worker number %d[%d]..." % (name, self.parent_name, worker_index, pid))
-                os.kill(pid, signal.SIGTERM)
-                os.waitpid(pid, 0)
-                logging.info("[%s - %s] Worker number %d[%d] terminated." % (name, self.parent_name, worker_index, pid))
-
+            self.kill_children()
             sys.exit(0)
+
+    def kill_children(self):
+        name = self.get_description()
+        for worker_index, pid in self.children:
+            logging.info("[%s - %s] Terminating sheep number %d[%d]..." % (name, self.parent_name, worker_index, pid))
+            os.kill(pid, signal.SIGTERM)
+            os.waitpid(pid, 0)
+            logging.info("[%s - %s] Sheep number %d[%d] terminated." % (name, self.parent_name, worker_index, pid))
 
     @classmethod
     def run(cls, arguments=None):
