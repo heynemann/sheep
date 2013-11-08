@@ -9,7 +9,17 @@ import logging
 import time
 import signal
 
-from derpconf.config import Config
+try:
+    from derpconf.config import Config
+except ImportError:
+    print("DerpConf not available, likely during setup.py.")
+
+try:
+    from colorama import init
+    init()
+    from colorama import Fore, Style
+except ImportError:
+    print("Colorama not available, likely during setup.py.")
 
 from sheep import __version__
 
@@ -32,7 +42,12 @@ class Shepherd(object):
         self.children = []
 
     def get_description(self):
-        return "Shepherd (sheep v%s)" % __version__
+        return "%s%sShepherd%s (sheep v%s)" % (
+            Fore.BLUE,
+            Style.BRIGHT,
+            Style.RESET_ALL,
+            __version__
+        )
 
     def config_parser(self, parser):
         pass
@@ -104,12 +119,17 @@ class Shepherd(object):
 
         name = self.get_description()
 
-        logging.info("[%s - Parent] Forking %d workers..." % (name, self.options.workers))
+        logging.info("[%s - %s] Forking %d workers..." % (name, self.parent_name, self.options.workers))
 
         self.children = []
 
         for i in range(self.options.workers):
-            worker_name = "worker %d" % i
+            worker_name = "%s%sworker %d%s" % (
+                Fore.GREEN,
+                Style.BRIGHT,
+                i,
+                Style.RESET_ALL
+            )
 
             pid = os.fork()
             if not pid:
@@ -119,6 +139,14 @@ class Shepherd(object):
 
         self.wait_for_children()
 
+    @property
+    def parent_name(self):
+        return "%s%sParent%s" % (
+            Fore.YELLOW,
+            Style.BRIGHT,
+            Style.RESET_ALL
+        )
+
     def wait_for_children(self):
         name = self.get_description()
 
@@ -126,13 +154,13 @@ class Shepherd(object):
             while True:
                 time.sleep(self.options.sleep)
         except KeyboardInterrupt:
-            logging.info('[%s - Parent] Closing after user interrupt (Parent PID: %d)...' % (name, os.getpid()))
+            logging.info('[%s - %s] Closing after user interrupt (Parent PID: %d)...' % (name, self.parent_name, os.getpid()))
 
             for worker_index, pid in self.children:
-                logging.info("[%s - Parent] Killing worker number %d[%d]..." % (name, worker_index, pid))
+                logging.info("[%s - %s] Killing worker number %d[%d]..." % (name, self.parent_name, worker_index, pid))
                 os.kill(pid, signal.SIGTERM)
                 os.waitpid(pid, 0)
-                logging.info("[%s - Parent] Worker number %d[%d] terminated." % (name, worker_index, pid))
+                logging.info("[%s - %s] Worker number %d[%d] terminated." % (name, self.parent_name, worker_index, pid))
 
             sys.exit(0)
 

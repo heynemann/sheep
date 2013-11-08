@@ -23,7 +23,7 @@ class TestShepherd(TestCase):
 
     def test_get_description(self):
         shepherd = Shepherd([])
-        expect(shepherd.get_description()).to_equal("Shepherd (sheep v%s)" % __version__)
+        expect(shepherd.get_description()).to_be_like("Shepherd (sheep v%s)" % __version__)
 
     def test_parse_arguments_can_parse_number_of_workers(self):
         shepherd = Shepherd(['--workers', '10'])

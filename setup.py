@@ -43,6 +43,7 @@ Sheep is a console worker generator.
     include_package_data=True,
     install_requires=[
         'derpconf',
+        'colorama',
     ],
     extras_require={
         'tests': tests_require,
