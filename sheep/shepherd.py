@@ -41,6 +41,9 @@ class Shepherd(object):
         self.config = None
         self.children = []
 
+        self.configure_log()
+        self.load_config()
+
     def get_description(self):
         return "%s%sShepherd%s (sheep v%s)" % (
             Fore.BLUE,
@@ -114,9 +117,6 @@ class Shepherd(object):
             pass
 
     def start(self):
-        self.configure_log()
-        self.load_config()
-
         name = self.get_description()
 
         logging.info("[%s - %s] Forking %d workers..." % (name, self.parent_name, self.options.workers))
