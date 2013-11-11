@@ -157,7 +157,7 @@ class Shepherd(object):
     def handle_signal(self, signal, frame):
         name = self.get_description()
 
-        logging.info('[%s - %s] Sheperd going away after signal interrupt (Shepherd PID: %d, Signal: %d)...' % (
+        logging.info('[%s - %s] Shepherd going away after signal interrupt (Shepherd PID: %d, Signal: %d)...' % (
             name, self.parent_name, os.getpid(), signal
         ))
 
