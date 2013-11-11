@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from os.path import abspath
 import time
 import signal
 
@@ -33,8 +34,8 @@ class TestShepherd(TestCase):
         expect(shepherd.options.workers).to_equal(5)
 
     def test_parse_arguments_can_parse_configuration(self):
-        shepherd = Shepherd(['--config', './config.py'])
-        expect(shepherd.options.config).to_equal('./config.py')
+        shepherd = Shepherd(['--config', './tests/cons.conf'])
+        expect(shepherd.options.config).to_equal(abspath('./tests/cons.conf'))
 
     #def test_parse_arguments_can_get_help_text(self):
         #shepherd = Shepherd(['--help'])
@@ -90,3 +91,12 @@ class TestShepherd(TestCase):
             time.sleep(1)
         else:
             shepherd.handle_child_process("worker")
+
+    def test_handle_child_process_dying(self):
+        class Shep(Shepherd):
+            def do_work(self):
+                raise RuntimeError("Error")
+
+        shepherd = Shep(['-vvv'])
+        shepherd.start()
+        assert False, "woot?"

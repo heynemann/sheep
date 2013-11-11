@@ -3,6 +3,7 @@
 
 import sys
 import os
+import psutil
 from os.path import abspath, isabs
 import argparse
 import logging
@@ -111,7 +112,13 @@ class Shepherd(object):
 
             while self.should_continue_working():
                 logging.info("[%s - %s] Doing work." % (name, worker_name))
-                self.do_work()
+                try:
+                    self.do_work()
+                except Exception:
+                    err = sys.exc_info()
+                    logging.error("%s%s[%s - %s] ERROR: %s" % (Fore.RED, Style.BRIGHT, name, worker_name, str(err[1])))
+                    logging.exception(err)
+
                 time.sleep(self.options.sleep)
         except KeyboardInterrupt:
             pass
@@ -165,14 +172,48 @@ class Shepherd(object):
 
         try:
             while True:
+                self.evaluate_children()
                 time.sleep(self.options.sleep)
         except KeyboardInterrupt:
-            logging.info('[%s - %s] Sheperd going away after user interrupt (Shepherd PID: %d)...' % (
+            logging.info('[%s - %s] Shepherd going away after user interrupt (Shepherd PID: %d)...' % (
                 name, self.parent_name, os.getpid()
             ))
 
             self.kill_children()
             sys.exit(0)
+
+    def evaluate_children(self):
+        name = self.get_description()
+
+        procs = []
+        for worker_index, pid in self.children:
+            worker_name = "%s%ssheep #%d%s" % (
+                Fore.GREEN,
+                Style.BRIGHT,
+                worker_index,
+                Style.RESET_ALL
+            )
+
+            proc = psutil.Process(pid)
+            if proc.status not in (psutil.STATUS_ZOMBIE, ):
+                procs.append((worker_index, pid))
+            else:
+                logging.info('[%s - %s] Reviving process for worker %s with pid %s...' % (
+                    name, self.parent_name, worker_name, pid
+                ))
+
+                # killing the zombie
+                proc.kill()
+                proc.wait()
+
+                pid = os.fork()
+                if not pid:
+                    self.handle_child_process(worker_name)
+                    return
+                else:
+                    procs.append((worker_index, pid))
+
+        self.children = procs
 
     def kill_children(self):
         name = self.get_description()
