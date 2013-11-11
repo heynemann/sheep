@@ -54,10 +54,10 @@ You can see all the options with `--help`:
 
     $ python my_worker.py --help
 
-get_description
----------------
+How to change my worker's name?
+------------------------------
 
-You should override this method in your Shepherd in order to get better logging messages when running your worker.
+You should override the `get_description` method in your `Shepherd` in order to get better logging messages when running your worker.
 
 Just return whatever text you want to be used as the name of your parent worker.
 
@@ -75,3 +75,29 @@ class MyWorker(Shepherd):
 if __name__ == "__main__":
     MyWorker.run()
 ```
+
+How to add arguments
+--------------------
+
+As with the arguments you can already pass to your `Shepherd`, you can add more of your own. Just override the `config_parser` method:
+
+```python
+from sheep import Shepherd
+
+class MyWorker(Shepherd):
+    def config_parser(self, parser):
+      # parser is an instance of argparse.ArgumentParser
+      # just use the regular argparse configuration methods
+      parser.add_argument('--foo', help='foo help')
+
+    def do_work(self):
+        # do some heavy work
+        print("Done")
+
+if __name__ == "__main__":
+    MyWorker.run()
+```
+
+Now `my_worker.py` can be called with `--foo`:
+
+    $ python my_worker.py --foo
