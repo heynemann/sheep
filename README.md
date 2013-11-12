@@ -160,3 +160,8 @@ if __name__ == "__main__":
 Now `my_worker.py` can be called with `--foo`:
 
     $ python my_worker.py --foo
+
+What if my worker raises an exception?
+--------------------------------------
+
+<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid.</blockquote>
