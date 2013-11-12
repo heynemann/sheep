@@ -103,11 +103,14 @@ from config import Config
 
 class MyWorker(Shepherd):
     def get_config_class(self):
-        return Config  # just return the class type and Shepherd will take care of the rest
+        return Config  # just return the class type and
+                       # Shepherd will take care of the rest
 
     def do_work(self):
         # do some heavy work
-        print(self.config.foo)  # prints "fooval" even if no config file specified or key not found in config file
+        print(self.config.foo)  # prints "fooval" even if no config 
+                                # file specified or key not found in 
+                                # config file
 
 if __name__ == "__main__":
     MyWorker.run()
