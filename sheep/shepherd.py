@@ -3,7 +3,6 @@
 
 import sys
 import os
-import psutil
 from os.path import abspath, isabs
 import argparse
 import logging
@@ -21,6 +20,11 @@ try:
     from colorama import Fore, Style
 except ImportError:
     print("Colorama not available, likely during setup.py.")
+
+try:
+    import psutil
+except ImportError:
+    print("psutil not available, likely during setup.py.")
 
 from sheep import __version__
 
