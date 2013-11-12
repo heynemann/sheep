@@ -32,6 +32,8 @@
 
 <p>sheep is a <code>dead-simple</code> worker process manager.</p>
 
+<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid. (<a href="http://www.livestocktrail.illinois.edu/sheepnet/paperDisplay.cfm?ContentID=1">An Introduction to Sheep Behavior - Richard Cobb</a>).</blockquote>
+
 <h2>
 <a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why?</h2>
 
@@ -216,8 +218,6 @@
 
 <h2>
 <a name="what-if-my-worker-raises-an-exception" class="anchor" href="#what-if-my-worker-raises-an-exception"><span class="octicon octicon-link"></span></a>What if my worker raises an exception?</h2>
-
-<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid. (<a href="http://www.livestocktrail.illinois.edu/sheepnet/paperDisplay.cfm?ContentID=1">An Introduction to Sheep Behavior - Richard Cobb</a>).</blockquote>
 
 <p>If your <code>do_work</code> method raises any exceptions, your <code>Shepherd</code> will log it to the standard output and run <code>do_work</code> again. Sheep won't let your worker die in the face of an exception.</p>
 
