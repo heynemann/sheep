@@ -84,6 +84,35 @@ if __name__ == "__main__":
     MyWorker.run()
 ```
 
+How to add default values for configuration keys?
+-------------------------------------------------
+
+Subclassing [derpconf's](https://github.com/globocom/derpconf) `Config` class you can specify defaults for your keys. Just create a `config.py` file with something like this:
+
+```python
+from derpconf.config import Config
+
+Config.define('foo', 'fooval', 'Foo is always a foo', 'FooValues')
+```
+
+Now, all that you need to do is tell your Shepherd where he can find your `Config` class:
+
+```python
+from sheep import Shepherd
+from config import Config
+
+class MyWorker(Shepherd):
+    def get_config_class(self):
+        return Config  # just return the class type and Shepherd will take care of the rest
+
+    def do_work(self):
+        # do some heavy work
+        print(self.config.foo)  # prints "fooval" even if no config file specified or key not found in config file
+
+if __name__ == "__main__":
+    MyWorker.run()
+```
+
 How to change my worker's name?
 ------------------------------
 
