@@ -54,6 +54,36 @@ You can see all the options with `--help`:
 
     $ python my_worker.py --help
 
+How to add my own configuration keys?
+-------------------------------------
+
+Since sheep uses [derpconf](https://github.com/globocom/derpconf), all you need to do is create a file with all the configurations (`my_worker.conf`) you require:
+
+```python
+# the configuration names MUST be in Uppercase, otherwise derpconf will ignore them
+CONFIG1 = "test"
+CONFIG2 = "other"
+```
+
+When invoking your `Shepherd`, just use the `--config` option:
+
+    $ python my_worker.py --config=./my_worker.conf
+
+Then in your `Shepherd` those become available via the `config` property:
+
+```python
+from sheep import Shepherd
+
+class MyWorker(Shepherd):
+    def do_work(self):
+        # do some heavy work
+        print(self.config.CONFIG1)  # prints "test"
+        print(self.config.CONFIG2)  # prints "other"
+
+if __name__ == "__main__":
+    MyWorker.run()
+```
+
 How to change my worker's name?
 ------------------------------
 
@@ -76,8 +106,8 @@ if __name__ == "__main__":
     MyWorker.run()
 ```
 
-How to add arguments
---------------------
+How to add arguments?
+---------------------
 
 As with the arguments you can already pass to your `Shepherd`, you can add more of your own. Just override the `config_parser` method:
 
