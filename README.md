@@ -165,3 +165,17 @@ What if my worker raises an exception?
 --------------------------------------
 
 <blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid. (<a href="http://www.livestocktrail.illinois.edu/sheepnet/paperDisplay.cfm?ContentID=1">An Introduction to Sheep Behavior - Richard Cobb</a>).</blockquote>
+
+If your `do_work` method raises any exceptions, your `Shepherd` will log it to the standard output and run `do_work` again. Sheep won't let your worker die in the face of an exception.
+
+"What if it gets a SEGFAULT error while doing its work?", you'll ask. Well, we are prepared for that. If the fork that's running your work dies, sheep will revive it and start running it again.
+
+How to Contribute
+-----------------
+
+Fork, branch, pull request. Same ol', same ol'.
+
+License
+-------
+
+Look at the LICENSE file.
