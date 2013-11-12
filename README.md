@@ -164,4 +164,4 @@ Now `my_worker.py` can be called with `--foo`:
 What if my worker raises an exception?
 --------------------------------------
 
-<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid.</blockquote>
+<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid. (reference: [An Introduction to Sheep Behavior](http://www.livestocktrail.illinois.edu/sheepnet/paperDisplay.cfm?ContentID=1).</blockquote>
