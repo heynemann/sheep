@@ -3,6 +3,8 @@ sheep
 
 sheep is a `dead-simple` worker process manager.
 
+<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid. (<a href="http://www.livestocktrail.illinois.edu/sheepnet/paperDisplay.cfm?ContentID=1">An Introduction to Sheep Behavior - Richard Cobb</a>).</blockquote>
+
 Why?
 ----
 
@@ -190,8 +192,6 @@ Now `my_worker.py` can be called with `--foo`:
 
 What if my worker raises an exception?
 --------------------------------------
-
-<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid. (<a href="http://www.livestocktrail.illinois.edu/sheepnet/paperDisplay.cfm?ContentID=1">An Introduction to Sheep Behavior - Richard Cobb</a>).</blockquote>
 
 If your `do_work` method raises any exceptions, your `Shepherd` will log it to the standard output and run `do_work` again. Sheep won't let your worker die in the face of an exception.
 
