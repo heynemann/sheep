@@ -95,7 +95,7 @@ from derpconf.config import Config
 Config.define('foo', 'fooval', 'Foo is always a foo', 'FooValues')
 ```
 
-Now, all that you need to do is tell your Shepherd where he can find your `Config` class:
+Now, all that you need to do is tell your `Shepherd` where he can find your `Config` class:
 
 ```python
 from sheep import Shepherd
