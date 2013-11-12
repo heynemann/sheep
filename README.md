@@ -57,7 +57,7 @@ You can see all the options with `--help`:
 How to add my own configuration keys?
 -------------------------------------
 
-Since sheep uses [derpconf](https://github.com/globocom/derpconf), all you need to do is create a file with all the configurations (`my_worker.conf`) you require:
+Since sheep uses [derpconf](https://github.com/globocom/derpconf), all you need to do is create a file with the configuration keys for your application. We'll call this file `my_worker.conf` for this example:
 
 ```python
 # the configuration names MUST be in Uppercase, otherwise derpconf will ignore them
