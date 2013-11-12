@@ -146,6 +146,28 @@
 </pre></div>
 
 <h2>
+<a name="how-to-initialize-services" class="anchor" href="#how-to-initialize-services"><span class="octicon octicon-link"></span></a>How to initialize services?</h2>
+
+<p>Many times you'll need to initialize some service, like connecting to a database. Sheep got you covered. Just override the <code>initialize</code> method in your <code>Shepherd</code>:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">sheep</span> <span class="kn">import</span> <span class="n">Shepherd</span>
+<span class="kn">from</span> <span class="nn">db</span> <span class="kn">import</span> <span class="n">connect</span>
+
+<span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">CONNECTION_STRING</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do some heavy work</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'SELECT baz FROM foo")  # or something like it</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+<p>Since <code>initialize</code> is called in the end of your <code>Shepherd's</code> constructor, the configuration keys will be available to you already.</p>
+
+<h2>
 <a name="how-to-change-my-workers-name" class="anchor" href="#how-to-change-my-workers-name"><span class="octicon octicon-link"></span></a>How to change my worker's name?</h2>
 
 <p>You should override the <code>get_description</code> method in your <code>Shepherd</code> in order to get better logging messages when running your worker.</p>
