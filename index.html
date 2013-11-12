@@ -90,7 +90,8 @@
 
 <p>Since sheep uses <a href="https://github.com/globocom/derpconf">derpconf</a>, all you need to do is create a file with the configuration keys for your application. We'll call this file <code>my_worker.conf</code> for this example:</p>
 
-<div class="highlight highlight-python"><pre><span class="c"># the configuration names MUST be in Uppercase, otherwise derpconf will ignore them</span>
+<div class="highlight highlight-python"><pre><span class="c"># the configuration names MUST be in uppercase,</span>
+<span class="c"># otherwise derpconf will ignore them</span>
 <span class="n">CONFIG1</span> <span class="o">=</span> <span class="s">"test"</span>
 <span class="n">CONFIG2</span> <span class="o">=</span> <span class="s">"other"</span>
 </pre></div>
@@ -131,11 +132,14 @@
 
 <span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get_config_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">Config</span>  <span class="c"># just return the class type and Shepherd will take care of the rest</span>
+        <span class="k">return</span> <span class="n">Config</span>  <span class="c"># just return the class type and</span>
+                       <span class="c"># Shepherd will take care of the rest</span>
 
     <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># do some heavy work</span>
-        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">foo</span><span class="p">)</span>  <span class="c"># prints "fooval" even if no config file specified or key not found in config file</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">foo</span><span class="p">)</span>  <span class="c"># prints "fooval" even if no config </span>
+                                <span class="c"># file specified or key not found in </span>
+                                <span class="c"># config file</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
     <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
