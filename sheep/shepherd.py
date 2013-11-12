@@ -84,6 +84,7 @@ class Shepherd(object):
 
     def load_config(self):
         if self.options.config is None:
+            self.config = self.get_config_class()
             return
 
         if not isabs(self.options.config):
