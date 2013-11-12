@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Sheep by heynemann</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Sheep</h1>
+        <p>sheep is a worker console app generator.</p>
+        <p class="view"><a href="https://github.com/heynemann/sheep">View the Project on GitHub <small>heynemann/sheep</small></a></p>
+        <ul>
+          <li><a href="https://github.com/heynemann/sheep/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/heynemann/sheep/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/heynemann/sheep">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="sheep" class="anchor" href="#sheep"><span class="octicon octicon-link"></span></a>sheep</h1>
+
+<p>sheep is a <code>dead-simple</code> worker process manager.</p>
+
+<h2>
+<a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why?</h2>
+
+<p>Writing worker processes that do background processing is a fairly common task.</p>
+
+<p>At the time sheep was created there was no available solution to the requirements.</p>
+
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<p>sheep must be able to:</p>
+
+<ul>
+<li>Easy to use configuration (sheep uses <a href="https://github.com/globocom/derpconf">derpconf</a>);</li>
+<li>Easy to fork (spawning multiple workers with a single command);</li>
+<li>Reliability when running an unit-of-work (must not die even in the face of SEGFAULT);</li>
+<li>Ease-of-use (Implementing a new worker must be really simple).</li>
+</ul><p>Without further ado, let's see how to implement and use sheep.</p>
+
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+
+<p>Installing is as easy as:</p>
+
+<pre><code>$ pip install sheep
+</code></pre>
+
+<h2>
+<a name="the-shepherd" class="anchor" href="#the-shepherd"><span class="octicon octicon-link"></span></a>The Shepherd</h2>
+
+<p>The class required to run sheep is the <code>Shepherd</code>. All you need to do is subclass it like this:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">sheep</span> <span class="kn">import</span> <span class="n">Shepherd</span>
+
+<span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do some heavy work</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Done"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+<p>Save this in a file called <code>my_worker.py</code>. Then running your new worker is as easy as:</p>
+
+<pre><code>$ python my_worker.py
+</code></pre>
+
+<p>You can see all the options with <code>--help</code>:</p>
+
+<pre><code>$ python my_worker.py --help
+</code></pre>
+
+<h2>
+<a name="how-to-add-my-own-configuration-keys" class="anchor" href="#how-to-add-my-own-configuration-keys"><span class="octicon octicon-link"></span></a>How to add my own configuration keys?</h2>
+
+<p>Since sheep uses <a href="https://github.com/globocom/derpconf">derpconf</a>, all you need to do is create a file with the configuration keys for your application. We'll call this file <code>my_worker.conf</code> for this example:</p>
+
+<div class="highlight highlight-python"><pre><span class="c"># the configuration names MUST be in Uppercase, otherwise derpconf will ignore them</span>
+<span class="n">CONFIG1</span> <span class="o">=</span> <span class="s">"test"</span>
+<span class="n">CONFIG2</span> <span class="o">=</span> <span class="s">"other"</span>
+</pre></div>
+
+<p>When invoking your <code>Shepherd</code>, just use the <code>--config</code> option:</p>
+
+<pre><code>$ python my_worker.py --config=./my_worker.conf
+</code></pre>
+
+<p>Then in your <code>Shepherd</code> those become available via the <code>config</code> property:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">sheep</span> <span class="kn">import</span> <span class="n">Shepherd</span>
+
+<span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do some heavy work</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">CONFIG1</span><span class="p">)</span>  <span class="c"># prints "test"</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">CONFIG2</span><span class="p">)</span>  <span class="c"># prints "other"</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+<h2>
+<a name="how-to-add-default-values-for-configuration-keys" class="anchor" href="#how-to-add-default-values-for-configuration-keys"><span class="octicon octicon-link"></span></a>How to add default values for configuration keys?</h2>
+
+<p>Subclassing <a href="https://github.com/globocom/derpconf">derpconf's</a> <code>Config</code> class you can specify defaults for your keys. Just create a <code>config.py</code> file with something like this:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">derpconf.config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">Config</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'fooval'</span><span class="p">,</span> <span class="s">'Foo is always a foo'</span><span class="p">,</span> <span class="s">'FooValues'</span><span class="p">)</span>
+</pre></div>
+
+<p>Now, all that you need to do is tell your <code>Shepherd</code> where he can find your <code>Config</code> class:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">sheep</span> <span class="kn">import</span> <span class="n">Shepherd</span>
+<span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_config_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Config</span>  <span class="c"># just return the class type and Shepherd will take care of the rest</span>
+
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do some heavy work</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">foo</span><span class="p">)</span>  <span class="c"># prints "fooval" even if no config file specified or key not found in config file</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+<h2>
+<a name="how-to-change-my-workers-name" class="anchor" href="#how-to-change-my-workers-name"><span class="octicon octicon-link"></span></a>How to change my worker's name?</h2>
+
+<p>You should override the <code>get_description</code> method in your <code>Shepherd</code> in order to get better logging messages when running your worker.</p>
+
+<p>Just return whatever text you want to be used as the name of your parent worker.</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">sheep</span> <span class="kn">import</span> <span class="n">Shepherd</span>
+
+<span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="k">return</span> <span class="s">"My Funky Worker v1.0.0"</span>
+
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do some heavy work</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Done"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+<h2>
+<a name="how-to-add-arguments" class="anchor" href="#how-to-add-arguments"><span class="octicon octicon-link"></span></a>How to add arguments?</h2>
+
+<p>As with the arguments you can already pass to your <code>Shepherd</code>, you can add more of your own. Just override the <code>config_parser</code> method:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">sheep</span> <span class="kn">import</span> <span class="n">Shepherd</span>
+
+<span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">config_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
+      <span class="c"># parser is an instance of argparse.ArgumentParser</span>
+      <span class="c"># just use the regular argparse configuration methods</span>
+      <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'--foo'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">'foo help'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do some heavy work</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Done"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+<p>Now <code>my_worker.py</code> can be called with <code>--foo</code>:</p>
+
+<pre><code>$ python my_worker.py --foo
+</code></pre>
+
+<h2>
+<a name="what-if-my-worker-raises-an-exception" class="anchor" href="#what-if-my-worker-raises-an-exception"><span class="octicon octicon-link"></span></a>What if my worker raises an exception?</h2>
+
+<blockquote>Contrary to what you may have heard or even expressed yourself, sheep are not stupid. (<a href="http://www.livestocktrail.illinois.edu/sheepnet/paperDisplay.cfm?ContentID=1">An Introduction to Sheep Behavior - Richard Cobb</a>).</blockquote>
+
+<p>If your <code>do_work</code> method raises any exceptions, your <code>Shepherd</code> will log it to the standard output and run <code>do_work</code> again. Sheep won't let your worker die in the face of an exception.</p>
+
+<p>"What if it gets a SEGFAULT error while doing its work?", you'll ask. Well, we are prepared for that. If the fork that's running your work dies, sheep will revive it and start running it again.</p>
+
+<h2>
+<a name="how-to-contribute" class="anchor" href="#how-to-contribute"><span class="octicon octicon-link"></span></a>How to Contribute</h2>
+
+<p>Fork, branch, pull request. Same ol', same ol'.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Look at the LICENSE file.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/heynemann">heynemann</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-45664610-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
