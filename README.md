@@ -117,6 +117,29 @@ if __name__ == "__main__":
     MyWorker.run()
 ```
 
+How to initialize services?
+---------------------------
+
+Many times you'll need to initialize some service, like connecting to a database. Sheep got you covered. Just override the `initialize` method in your `Shepherd`:
+
+```python
+from sheep import Shepherd
+from db import connect
+
+class MyWorker(Shepherd):
+    def initialize(self):
+        self.db = connect(self.config.CONNECTION_STRING)
+
+    def do_work(self):
+        # do some heavy work
+        self.db.execute('SELECT baz FROM foo")  # or something like it
+
+if __name__ == "__main__":
+    MyWorker.run()
+```
+
+Since `initialize` is called in the end of your `Shepherd's` constructor, the configuration keys will be available to you already.
+
 How to change my worker's name?
 ------------------------------
 

@@ -44,6 +44,10 @@ class Shepherd(object):
 
         self.configure_log()
         self.load_config()
+        self.initialize()
+
+    def initialize(self):
+        pass
 
     def get_description(self):
         return "%s%sShepherd%s (sheep v%s)" % (
