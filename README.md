@@ -134,7 +134,7 @@ class MyWorker(Shepherd):
 
     def do_work(self):
         # do some heavy work
-        self.db.execute('SELECT baz FROM foo")  # or something like it
+        self.db.execute('SELECT baz FROM foo')  # or something like it
 
 if __name__ == "__main__":
     MyWorker.run()
