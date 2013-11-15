@@ -161,7 +161,7 @@
 
     <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># do some heavy work</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'SELECT baz FROM foo")  # or something like it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'SELECT baz FROM foo'</span><span class="p">)</span>  <span class="c"># or something like it</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
     <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
