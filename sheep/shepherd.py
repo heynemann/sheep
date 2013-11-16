@@ -48,7 +48,6 @@ class Shepherd(object):
 
         self.configure_log()
         self.load_config()
-        self.initialize()
 
     def initialize(self):
         pass
@@ -107,6 +106,7 @@ class Shepherd(object):
         logging.info("Setting log-level to %s." % log_level)
 
     def handle_child_process(self, worker_name):
+        self.initialize()
         name = self.get_description()
 
         def handle_sigterm(signal, frame):
