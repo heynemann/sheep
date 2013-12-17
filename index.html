@@ -224,6 +224,26 @@
 <p>"What if it gets a SEGFAULT error while doing its work?", you'll ask. Well, we are prepared for that. If the fork that's running your work dies, sheep will revive it and start running it again.</p>
 
 <h2>
+<a name="how-can-i-handle-the-exceptions-it-raises" class="anchor" href="#how-can-i-handle-the-exceptions-it-raises"><span class="octicon octicon-link"></span></a>How can I handle the exceptions it raises?</h2>
+
+<p>Assuming it's a trappable error (not a SEGFAULT), you can use the <code>handle_error</code> method in your <code>Shepherd</code> class to do something with the error, like logging it to an error collector like <code>Sentry</code>.</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">sheep</span> <span class="kn">import</span> <span class="n">Shepherd</span>
+
+<span class="k">class</span> <span class="nc">MyWorker</span><span class="p">(</span><span class="n">Shepherd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+        <span class="c"># do something with the exception information</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">do_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do some heavy work</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">'woot?'</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">MyWorker</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+<h2>
 <a name="how-to-contribute" class="anchor" href="#how-to-contribute"><span class="octicon octicon-link"></span></a>How to Contribute</h2>
 
 <p>Fork, branch, pull request. Same ol', same ol'.</p>
