@@ -49,6 +49,9 @@ class Shepherd(object):
         self.configure_log()
         self.load_config()
 
+    def handle_error(self, exc_type, exc_value, tb):
+        pass
+
     def initialize(self):
         pass
 
@@ -125,6 +128,8 @@ class Shepherd(object):
                     self.do_work()
                 except Exception:
                     err = sys.exc_info()
+                    self.handle_error(*err)
+
                     logging.error("%s%s[%s - %s] ERROR: %s" % (Fore.RED, Style.BRIGHT, name, worker_name, str(err[1])))
                     logging.exception(err)
 

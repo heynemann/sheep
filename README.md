@@ -197,6 +197,27 @@ If your `do_work` method raises any exceptions, your `Shepherd` will log it to t
 
 "What if it gets a SEGFAULT error while doing its work?", you'll ask. Well, we are prepared for that. If the fork that's running your work dies, sheep will revive it and start running it again.
 
+How can I handle the exceptions it raises?
+------------------------------------------
+
+Assuming it's a trappable error (not a SEGFAULT), you can use the `handle_error` method in your `Shepherd` class to do something with the error, like logging it to an error collector like `Sentry`.
+
+```python
+from sheep import Shepherd
+
+class MyWorker(Shepherd):
+    def handle_error(self, exc_type, exc_value, tb):
+        # do something with the exception information
+        pass
+
+    def do_work(self):
+        # do some heavy work
+        raise RuntimeError('woot?')
+
+if __name__ == "__main__":
+    MyWorker.run()
+```
+
 How to Contribute
 -----------------
 
