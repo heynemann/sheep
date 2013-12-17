@@ -7,6 +7,7 @@ import time
 import signal
 
 from preggy import expect
+from derpconf.config import Config
 
 from sheep import Shepherd, __version__
 from tests import TestCase
@@ -37,9 +38,6 @@ class TestShepherd(TestCase):
         shepherd = Shepherd(['--config', './tests/cons.conf'])
         expect(shepherd.options.config).to_equal(abspath('./tests/cons.conf'))
 
-    #def test_parse_arguments_can_get_help_text(self):
-        #shepherd = Shepherd(['--help'])
-
     def test_do_work_does_nothing_by_default(self):
         shepherd = Shepherd([])
         expect(shepherd.do_work()).to_be_null()
@@ -48,7 +46,8 @@ class TestShepherd(TestCase):
         shepherd = Shepherd([])
         shepherd.load_config()
 
-        expect(shepherd.config).to_be_null()
+        expect(shepherd.config).not_to_be_null()
+        expect(shepherd.config).to_be_instance_of(Config)
 
     def test_load_config_loads_configuration_file(self):
         shepherd = Shepherd(["-c", "./tests/cons.conf"])
@@ -91,12 +90,3 @@ class TestShepherd(TestCase):
             time.sleep(1)
         else:
             shepherd.handle_child_process("worker")
-
-    def test_handle_child_process_dying(self):
-        class Shep(Shepherd):
-            def do_work(self):
-                raise RuntimeError("Error")
-
-        shepherd = Shep(['-vvv'])
-        shepherd.start()
-        assert False, "woot?"
