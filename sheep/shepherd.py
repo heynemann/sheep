@@ -209,7 +209,7 @@ class Shepherd(object):
             )
 
             proc = psutil.Process(pid)
-            if proc.status not in (psutil.STATUS_ZOMBIE, psutil.STATUS_DEAD, psutil.STATUS_STOPPED):
+            if proc.status() not in (psutil.STATUS_ZOMBIE, psutil.STATUS_DEAD, psutil.STATUS_STOPPED):
                 procs.append((worker_index, pid))
             else:
                 logging.info('[%s - %s] Reviving process for worker %s with pid %s...' % (
