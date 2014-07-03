@@ -226,4 +226,4 @@ Fork, branch, pull request. Same ol', same ol'.
 License
 -------
 
-Look at the LICENSE file.
+Look at the [LICENSE](/LICENSE) file.
