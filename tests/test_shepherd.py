@@ -34,6 +34,16 @@ class TestShepherd(TestCase):
         shepherd = Shepherd(['-w', '5'])
         expect(shepherd.options.workers).to_equal(5)
 
+    def test_parse_arguments_can_parse_worker_name(self):
+        shepherd = Shepherd([])
+        expect(shepherd.options.name).to_equal('sheep')
+
+        shepherd = Shepherd(['--name', 'aries'])
+        expect(shepherd.options.name).to_equal('aries')
+
+        shepherd = Shepherd(['-n', 'aries'])
+        expect(shepherd.options.name).to_equal('aries')
+
     def test_parse_arguments_can_parse_configuration(self):
         shepherd = Shepherd(['--config', './tests/cons.conf'])
         expect(shepherd.options.config).to_equal(abspath('./tests/cons.conf'))
