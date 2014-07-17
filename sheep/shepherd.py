@@ -73,6 +73,7 @@ class Shepherd(object):
         system_group.add_argument('--workers', '-w', type=int, default=1, help='Number of worker instances to start.')
         system_group.add_argument('--sleep', '-s', type=int, default=1, help='Number of seconds between jobs.')
         system_group.add_argument('--config', '-c', help='Path of configuration file to load for this worker.')
+        system_group.add_argument('--name', '-n', default='sheep', help='Name of the worker.')
         system_group.add_argument(
             '--verbose', '-v', action='count', default=0,
             help='Log level: v=warning, vv=info, vvv=debug.'
@@ -145,9 +146,10 @@ class Shepherd(object):
         self.children = []
 
         for i in range(self.options.workers):
-            worker_name = "%s%ssheep #%d%s" % (
+            worker_name = "%s%s%s #%d%s" % (
                 Fore.GREEN,
                 Style.BRIGHT,
+                self.options.name,
                 i,
                 Style.RESET_ALL
             )
@@ -201,9 +203,10 @@ class Shepherd(object):
 
         procs = []
         for worker_index, pid in self.children:
-            worker_name = "%s%ssheep #%d%s" % (
+            worker_name = "%s%s%s #%d%s" % (
                 Fore.GREEN,
                 Style.BRIGHT,
+                self.options.name,
                 worker_index,
                 Style.RESET_ALL
             )
